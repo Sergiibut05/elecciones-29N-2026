@@ -190,4 +190,8 @@ Todo está explicado y comentado en el notebook, sección por sección.
 
 </details>
 
+## 📜 Licencia
+
+El código (notebook y scripts) se publica con licencia [MIT](LICENSE): puedes usarlo, modificarlo y compartirlo citando la autoría. Los datos de terceros conservan su licencia original: las tablas de Wikipedia son CC BY-SA y los contornos provinciales vienen de click_that_hood.
+
 <sub>Fuentes: tablas de encuestas de Wikipedia, que citan la publicación original de cada encuesta; resultados del Ministerio del Interior; contornos provinciales del proyecto <a href="https://github.com/codeforgermany/click_that_hood">click_that_hood</a> (Code for Germany). Proyecto educativo e independiente.</sub>
