@@ -3,7 +3,7 @@
 Uso (desde la raíz del proyecto, después de ejecutar el notebook):
     python scripts/figuras_readme.py
 
-Crea/actualiza los PNG de la carpeta img/.
+Crea/actualiza los PNG de img/ (castellano) e img/en/ (inglés).
 """
 from pathlib import Path
 import base64
@@ -47,14 +47,23 @@ def titulo(fig, texto, sub=None, y=1.0):
         fig.text(0.0, y - 0.012, sub, fontsize=11.5, color=TINTA_2, ha="left", va="top", transform=fig.transFigure)
 
 
+LANG = "es"          # "es" o "en": lo fija el bloque principal
+OUT = IMG
+
+
+def T(es, en):
+    """Texto en el idioma activo."""
+    return en if LANG == "en" else es
+
+
 def guardar(fig, nombre):
-    fig.savefig(IMG / nombre)
+    fig.savefig(OUT / nombre)
     plt.close(fig)
-    print("  ✓", nombre)
+    print("  ✓", (OUT / nombre).relative_to(RAIZ))
 
 
 def pct(x):
-    return f"{x:.0%}".replace("%", " %")
+    return f"{x:.0%}" if LANG == "en" else f"{x:.0%}".replace("%", " %")
 
 
 def rango(s):
@@ -104,9 +113,9 @@ def hemiciclo():
     ax.scatter(xy[~vacio, 0], xy[~vacio, 1], s=62, c=np.array(cols)[~vacio], edgecolors="white", linewidths=1.2, zorder=3)
     ax.scatter(xy[vacio, 0], xy[vacio, 1], s=62, c="white", edgecolors=TINTA_3, linewidths=1.2, zorder=3)
     ax.plot([0, 0], [r0 - 0.08, r1 + 0.06], color=TINTA, lw=1.2, ls=(0, (3, 3)), zorder=2)
-    ax.text(0, r1 + 0.08, "176 = mayoría absoluta", ha="center", va="bottom", fontsize=10.5, color=TINTA)
+    ax.text(0, r1 + 0.08, T("176 = mayoría absoluta", "176 = majority"), ha="center", va="bottom", fontsize=10.5, color=TINTA)
     ax.text(0, 0.03, "350", ha="center", va="bottom", fontsize=34, fontweight="bold", color=TINTA)
-    ax.text(0, -0.02, "escaños", ha="center", va="top", fontsize=12, color=TINTA_2)
+    ax.text(0, -0.02, T("escaños", "seats"), ha="center", va="top", fontsize=12, color=TINTA_2)
 
     # leyenda con números (identidad nunca solo por color)
     leyenda = [(p, n) for p, n in med.sort_values(ascending=False).items()]
@@ -118,25 +127,25 @@ def hemiciclo():
         cx, cy = colx[i % 3], y0 - 0.085 * (i // 3)
         if p == "?":
             ax.scatter(cx, cy, s=90, c="white", edgecolors=TINTA_3, linewidths=1.2)
-            ax.text(cx + 0.04, cy, f"{n}  en el aire (escaños muy disputados)", va="center", fontsize=10.5, color=TINTA_2)
+            ax.text(cx + 0.04, cy, T(f"{n}  en el aire (escaños muy disputados)", f"{n}  too close to call"), va="center", fontsize=10.5, color=TINTA_2)
         else:
             ax.scatter(cx, cy, s=90, c=COLORES[p], edgecolors="white", linewidths=1)
             ax.text(cx + 0.04, cy, f"{n}", va="center", fontsize=11.5, fontweight="bold", color=TINTA)
             ax.text(cx + 0.06 + 0.032 * len(str(n)), cy, NOMBRE.get(p, p), va="center", fontsize=10.5, color=TINTA_2)
     ax.set_xlim(-1.1, 1.1); ax.set_ylim(y0 - 0.085 * ((len(leyenda) - 1) // 3) - 0.08, 1.2)
     ax.set_aspect("equal"); ax.axis("off")
-    titulo(fig, "Así quedaría el Congreso en el escenario más probable",
-           "Mediana de 20.000 elecciones simuladas · 29-N 2026", y=0.98)
+    titulo(fig, T("Así quedaría el Congreso en el escenario más probable", "Spain's Congress in the most likely scenario"),
+           T("Mediana de 20.000 elecciones simuladas · 29-N 2026", "Median of 20,000 simulated elections · November 29, 2026"), y=0.98)
     guardar(fig, "hemiciclo.png")
 
 
 # ----------------------------------------------------- 2. preguntas clave
 def probabilidades():
     preguntas = [
-        ("¿Suman PP + Vox mayoría absoluta (176)?", bloques.loc["PP + Vox", "probabilidad"]),
-        ("¿Es el PP el partido con más escaños?", bloques.loc["PP primera fuerza en escaños", "probabilidad"]),
-        ("¿Suma 176 el bloque de la investidura de 2023\n(PSOE, socios y Junts)?", bloques.loc["Bloque investidura 2023 con Junts", "probabilidad"]),
-        ("¿Suman 176 PSOE + FA + Compromís + Podemos?", bloques.loc["PSOE + FA + FV + Podemos", "probabilidad"]),
+        (T("¿Suman PP + Vox mayoría absoluta (176)?", "Do PP + Vox win a majority (176 seats)?"), bloques.loc["PP + Vox", "probabilidad"]),
+        (T("¿Es el PP el partido con más escaños?", "Is PP the largest party?"), bloques.loc["PP primera fuerza en escaños", "probabilidad"]),
+        (T("¿Suma 176 el bloque de la investidura de 2023\n(PSOE, socios y Junts)?", "Do Sánchez's 2023 allies win a majority\n(PSOE, partners and Junts)?"), bloques.loc["Bloque investidura 2023 con Junts", "probabilidad"]),
+        (T("¿Suman 176 PSOE + FA + Compromís + Podemos?", "Does the left (PSOE + Sumar parties) win 176 alone?"), bloques.loc["PSOE + FA + FV + Podemos", "probabilidad"]),
     ]
     fig, ax = plt.subplots(figsize=(11, 4.6))
     y = np.arange(len(preguntas))[::-1]
@@ -146,10 +155,11 @@ def probabilidades():
         ax.text(-0.02, yi, q, ha="right", va="center", fontsize=12, color=TINTA)
         ax.text(1.02, yi, pct(p), ha="left", va="center", fontsize=17, fontweight="bold", color=TINTA)
         n10 = int(round(p * 10))
-        ax.text(1.02, yi - 0.33, f"≈ {n10} de cada 10" if n10 else "< 1 de cada 10", ha="left", va="center", fontsize=9.5, color=TINTA_2)
+        ax.text(1.02, yi - 0.33, T(f"≈ {n10} de cada 10", f"≈ {n10} in 10") if n10 else T("< 1 de cada 10", "< 1 in 10"), ha="left", va="center", fontsize=9.5, color=TINTA_2)
     ax.set_xlim(0, 1); ax.set_ylim(-0.6, len(preguntas) - 0.4); ax.axis("off")
-    titulo(fig, "Las preguntas que importan, en probabilidades",
-           "Porcentaje de las 20.000 simulaciones en las que ocurre cada cosa", y=0.98)
+    titulo(fig, T("Las preguntas que importan, en probabilidades", "The questions that matter, as probabilities"),
+           T("Porcentaje de las 20.000 simulaciones en las que ocurre cada cosa",
+             "Share of 20,000 simulated elections in which each outcome happens"), y=0.98)
     fig.subplots_adjust(left=0.42, right=0.86)
     guardar(fig, "probabilidades.png")
 
@@ -168,18 +178,19 @@ def rangos():
         ax.text(b95 + 2.5, i, f"{int(r['esc_mediana'])}  ({a80}–{b80})", va="center", fontsize=10.5, color=TINTA)
     ax.set_yticks(range(len(t))); ax.set_yticklabels([NOMBRE.get(p, p) for p in t.index], fontsize=11)
     ax.tick_params(axis="y", length=0)
-    ax.set_xlim(0, 195); ax.set_xlabel("Escaños")
+    ax.set_xlim(0, 195); ax.set_xlabel(T("Escaños", "Seats"))
     ax.grid(axis="x", color=GRIS_REJILLA, lw=.8); ax.set_axisbelow(True); ax.spines["left"].set_visible(False)
     # mini leyenda de lectura
     ly = -1.3
     ax.plot([118, 138], [ly, ly], color=TINTA_3, lw=9, solid_capstyle="round", clip_on=False)
     ax.plot([110, 146], [ly, ly], color=TINTA_3, lw=2, alpha=.5, clip_on=False)
     ax.scatter(128, ly, s=70, color="white", edgecolor=TINTA, lw=1.5, zorder=5, clip_on=False)
-    ax.text(150, ly, "○ más probable · barra gruesa: 8 de cada 10 · línea fina: 95 de cada 100",
+    ax.text(150, ly, T("○ más probable · barra gruesa: 8 de cada 10 · línea fina: 95 de cada 100", "○ most likely · thick bar: 8 in 10 · thin line: 95 in 100"),
             va="center", fontsize=9.5, color=TINTA_2, clip_on=False)
     ax.set_ylim(-1.8, len(t) - 0.4)
-    titulo(fig, "¿Cuántos escaños puede sacar cada partido?",
-           "Escaños más probables y rango en el que caen 8 de cada 10 simulaciones", y=0.98)
+    titulo(fig, T("¿Cuántos escaños puede sacar cada partido?", "How many seats could each party win?"),
+           T("Escaños más probables y rango en el que caen 8 de cada 10 simulaciones",
+             "Most likely seat count and the range covering 8 in 10 simulations"), y=0.98)
     guardar(fig, "rangos_escanos.png")
 
 
@@ -197,28 +208,31 @@ def sesgo_encuestadoras():
         etiqueta = f"{casa}" + (f"  ·  {medio}" if medio and medio != "—" else "")
         ax.text(-lim - 0.15 if v > 0 else 0.15, yi, etiqueta, va="center",
                 ha="right" if v > 0 else "left", fontsize=9.5, color=TINTA_2)
-        txt = "0,0" if abs(v) < 0.05 else f"{v:+.1f}".replace(".", ",").replace("-", "−")
+        txt = "0.0" if abs(v) < 0.05 else f"{v:+.1f}".replace("-", "−")
+        if LANG == "es": txt = txt.replace(".", ",")
         if abs(v) > lim:
-            ax.text(vv + 0.12 if v < 0 else vv - 0.12, yi, f"{txt}  (fuera de escala)", va="center",
+            ax.text(vv + 0.12 if v < 0 else vv - 0.12, yi, T(f"{txt}  (fuera de escala)", f"{txt}  (off scale)"), va="center",
                     ha="left" if v < 0 else "right", fontsize=9.5, color="white", fontweight="bold")
         else:
             ax.text(vv + (0.1 if v > 0 else -0.1), yi, txt, va="center", ha="left" if v > 0 else "right", fontsize=9, color=TINTA)
     ax.axvline(0, color=TINTA, lw=1)
     ax.set_xlim(-lim - 3.6, lim + 0.6); ax.set_yticks([]); ax.spines["left"].set_visible(False)
-    ax.set_xticks(range(-4, 5)); ax.set_xlabel("Puntos de diferencia PP − PSOE frente a la encuestadora privada media")
+    ax.set_xticks(range(-4, 5)); ax.set_xlabel(T("Puntos de diferencia PP − PSOE frente a la encuestadora privada media", "PP − PSOE gap vs. the average private pollster (points)"))
     ax.grid(axis="x", color=GRIS_REJILLA, lw=.8); ax.set_axisbelow(True)
-    ax.text(-0.15, len(s) - 0.1, "← da más al PSOE", ha="right", va="bottom", fontsize=11, color=COLORES["PSOE"], fontweight="bold")
-    ax.text(0.15, len(s) - 0.1, "da más al PP →", ha="left", va="bottom", fontsize=11, color=COLORES["PP"], fontweight="bold")
+    ax.text(-0.15, len(s) - 0.1, T("← da más al PSOE", "← leans PSOE"), ha="right", va="bottom", fontsize=11, color=COLORES["PSOE"], fontweight="bold")
+    ax.text(0.15, len(s) - 0.1, T("da más al PP →", "leans PP →"), ha="left", va="bottom", fontsize=11, color=COLORES["PP"], fontweight="bold")
     ax.set_ylim(-0.7, len(s) + 0.6)
-    titulo(fig, "Cada encuestadora tiene su «acento»",
-           "Sesgo estimado por el modelo (efecto casa) en la distancia PP − PSOE. El modelo lo descuenta.", y=0.98)
+    titulo(fig, T("Cada encuestadora tiene su «acento»", "Every pollster has its own \"accent\""),
+           T("Sesgo estimado por el modelo (efecto casa) en la distancia PP − PSOE. El modelo lo descuenta.",
+             "House effect estimated by the model on the PP − PSOE gap. The forecast corrects for it."), y=0.98)
     guardar(fig, "sesgo_encuestadoras.png")
 
 
 # ------------------------------------------------------ 5. ¿y si fallan?
 def y_si_fallan():
-    nombres = {"BASE (error aleatorio)": "Escenario base", "2015": "…como en 2015", "2016": "…como en 2016",
-               "April 2019": "…como en abril 2019", "November 2019": "…como en noviembre 2019", "2023": "…como en 2023"}
+    nombres = {"BASE (error aleatorio)": T("Escenario base", "Baseline forecast"), "2015": T("…como en 2015", "…as in 2015"),
+               "2016": T("…como en 2016", "…as in 2016"), "April 2019": T("…como en abril 2019", "…as in April 2019"),
+               "November 2019": T("…como en noviembre 2019", "…as in Nov 2019"), "2023": T("…como en 2023", "…as in 2023")}
     orden = ["BASE (error aleatorio)", "2015", "2016", "April 2019", "November 2019", "2023"]
     r = replay.reindex(orden)
     fig, ax = plt.subplots(figsize=(11, 4.8))
@@ -226,7 +240,7 @@ def y_si_fallan():
     lo, hi = 160, 210
     ax.axvspan(175.5, hi, color="#1d84ce", alpha=.06, lw=0)
     ax.axvline(175.5, color=TINTA, lw=1.2, ls=(0, (3, 3)))
-    ax.text(176.2, len(r) - 0.35, "mayoría absoluta →", fontsize=10, color=TINTA, va="center")
+    ax.text(176.2, len(r) - 0.35, T("mayoría absoluta →", "majority →"), fontsize=10, color=TINTA, va="center")
     for yi, (k, row) in zip(y, r.iterrows()):
         v = row["PP+Vox (mediana)"]; p = row["P(PP+Vox ≥176)"]
         c = COLORES["PP"] if v >= 176 else TINTA_3
@@ -236,14 +250,15 @@ def y_si_fallan():
         ax.text(v + (1.4 if derecha else -1.4), yi + 0.02, f"{int(v)}", va="center", fontsize=11, fontweight="bold",
                 ha="left" if derecha else "right", color=TINTA)
         ax.text(hi + 1.5, yi, pct(p), va="center", fontsize=12, fontweight="bold", color=TINTA)
-    ax.text(hi + 1.5, len(r) - 0.35, "prob. mayoría", va="center", fontsize=9.5, color=TINTA_2)
+    ax.text(hi + 1.5, len(r) - 0.35, T("prob. mayoría", "P(majority)"), va="center", fontsize=9.5, color=TINTA_2)
     ax.set_yticks(y); ax.set_yticklabels([nombres[k] for k in r.index], fontsize=11.5)
     ax.get_yticklabels()[0].set_fontweight("bold")
     ax.tick_params(axis="y", length=0); ax.spines["left"].set_visible(False)
-    ax.set_xlim(lo, hi); ax.set_ylim(-0.6, len(r) - 0.1); ax.set_xlabel("Escaños de PP + Vox (mediana)")
+    ax.set_xlim(lo, hi); ax.set_ylim(-0.6, len(r) - 0.1); ax.set_xlabel(T("Escaños de PP + Vox (mediana)", "PP + Vox seats (median)"))
     ax.grid(axis="x", color=GRIS_REJILLA, lw=.8); ax.set_axisbelow(True)
-    titulo(fig, "¿Y si las encuestas fallan como en otras elecciones?",
-           "Escaños de PP + Vox si este año se repitiera exactamente el error de las encuestas de cada elección pasada", y=0.98)
+    titulo(fig, T("¿Y si las encuestas fallan como en otras elecciones?", "What if the polls miss like they did before?"),
+           T("Escaños de PP + Vox si este año se repitiera exactamente el error de las encuestas de cada elección pasada",
+             "PP + Vox seats if this year's polls repeated the exact error of each past Spanish election"), y=0.98)
     guardar(fig, "y_si_fallan.png")
 
 
@@ -257,21 +272,24 @@ def prueba_2023():
         ax.plot([a, b], [i, i], color=c, lw=12, alpha=.35, solid_capstyle="round")
         ax.scatter(bt.loc[p, "mediana"], i, s=90, color="white", edgecolor=c, lw=2.2, zorder=3)
         ax.scatter(bt.loc[p, "real"], i, s=130, marker="X", color=TINTA, edgecolor="white", lw=1, zorder=4)
-        ax.text(b + 3, i, f"predicho {int(bt.loc[p, 'mediana'])} · real {int(bt.loc[p, 'real'])}", va="center", fontsize=10.5, color=TINTA)
+        ax.text(b + 3, i, T(f"predicho {int(bt.loc[p, 'mediana'])} · real {int(bt.loc[p, 'real'])}", f"predicted {int(bt.loc[p, 'mediana'])} · actual {int(bt.loc[p, 'real'])}"), va="center", fontsize=10.5, color=TINTA)
     ax.set_yticks(range(len(ps))); ax.set_yticklabels(ps, fontsize=12); ax.invert_yaxis()
     ax.tick_params(axis="y", length=0); ax.spines["left"].set_visible(False)
-    ax.set_xlim(0, 215); ax.set_xlabel("Escaños")
+    ax.set_xlim(0, 215); ax.set_xlabel(T("Escaños", "Seats"))
     ax.grid(axis="x", color=GRIS_REJILLA, lw=.8); ax.set_axisbelow(True)
-    ax.text(0, 4.05, "○ predicción más probable   ✖ resultado real   barra: rango de 8 de cada 10 simulaciones",
+    ax.text(0, 4.05, T("○ predicción más probable   ✖ resultado real   barra: rango de 8 de cada 10 simulaciones", "○ most likely prediction   ✖ actual result   bar: range of 8 in 10 simulations"),
             fontsize=9.5, color=TINTA_2, va="top")
     ax.set_ylim(4.3, -0.6)
-    titulo(fig, "Examen sorpresa: el modelo aplicado a las elecciones de 2023",
-           "Con solo la información disponible el 18 de julio de 2023: el resultado real cae dentro de todos los rangos", y=0.98)
+    titulo(fig, T("Examen sorpresa: el modelo aplicado a las elecciones de 2023", "Pop quiz: the same model applied to Spain's 2023 election"),
+           T("Con solo la información disponible el 18 de julio de 2023: el resultado real cae dentro de todos los rangos",
+             "Using only information available on July 18, 2023: every actual result falls inside its range"), y=0.98)
     guardar(fig, "prueba_2023.png")
 
 
 # ------------------------------------------- 7. tendencia (desde el notebook)
 def tendencia_desde_notebook():
+    if LANG != "es":
+        return
     nb = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
     for c in nb["cells"]:
         if c["cell_type"] == "code" and "Intención de voto latente" in "".join(c["source"]):
@@ -354,7 +372,7 @@ def _marco_mapa(ax):
     x0, y0 = -18.2 + DESPL_CANARIAS[0] - 0.3, 27.5 + DESPL_CANARIAS[1] - 0.25
     ax.plot([x0, -7.2, -7.2, x0, x0], [y0, y0, 29.6 + DESPL_CANARIAS[1], 29.6 + DESPL_CANARIAS[1], y0],
             color=TINTA_3, lw=0.8, zorder=0)
-    ax.text(x0 + 0.1, y0 + 0.12, "Canarias", fontsize=9, color=TINTA_2)
+    ax.text(x0 + 0.1, y0 + 0.12, T("Canarias", "Canary Islands"), fontsize=9, color=TINTA_2)
     ax.set_xlim(-12.9, 4.6); ax.set_ylim(34.4, 44.0); ax.set_aspect(ASPECTO); ax.axis("off")
 
 
@@ -401,7 +419,7 @@ def mapa_escanos():
             bx.text(x + tot[p] / 2, 0, f"{tot[p]}", ha="center", va="center", color="white", fontsize=10, fontweight="bold")
         x += tot[p]
     bx.plot([175.5, 175.5], [-0.75, 0.75], color=TINTA, lw=1.8, clip_on=False)
-    bx.text(175.5, -0.85, "176 = mayoría", ha="center", va="top", fontsize=9.5, color=TINTA)
+    bx.text(175.5, -0.85, T("176 = mayoría", "176 = majority"), ha="center", va="top", fontsize=9.5, color=TINTA)
     bx.set_xlim(0, 350); bx.set_ylim(-0.5, 0.5); bx.axis("off")
     orden_ley = sorted(orden_barra, key=lambda p: -tot[p])
     for k, p in enumerate(orden_ley):
@@ -410,22 +428,26 @@ def mapa_escanos():
         fig.text(fx + 0.017, fy, f"{NOMBRE.get(p, p)} {tot[p]}", color=TINTA, fontsize=9.5, va="center")
 
     pv = bloques.loc["PP + Vox", "probabilidad"]; inv = bloques.loc["Bloque investidura 2023 con Junts", "probabilidad"]
-    titulo(fig, "Dónde se ganan los escaños",
-           "Un punto por escaño en el escenario típico · fondo: partido más votado en la provincia", y=0.985)
-    for fx, valor, texto in [(0.0, pv, "probabilidad de que PP + Vox\nsumen 176 escaños"),
-                             (0.26, inv, "probabilidad de que lo sumen los\nsocios de la investidura de 2023")]:
+    titulo(fig, T("Dónde se ganan los escaños", "Where the seats are won"),
+           T("Un punto por escaño en el escenario típico · fondo: partido más votado en la provincia",
+             "One dot per seat in a typical scenario · shading: party with the most votes in each province"), y=0.985)
+    for fx, valor, texto in [(0.0, pv, T("probabilidad de que PP + Vox\nsumen 176 escaños", "chance PP + Vox\nwin 176 seats")),
+                             (0.26, inv, T("probabilidad de que lo sumen los\nsocios de la investidura de 2023", "chance Sánchez's 2023\nallies do"))]:
         fig.add_artist(plt.Line2D([fx, fx + 0.2], [0.925, 0.925], color=TINTA, lw=2.5))
         fig.text(fx, 0.915, pct(valor), fontsize=26, fontweight="bold", color=TINTA, va="top")
         fig.text(fx, 0.862, texto, fontsize=10, color=TINTA_2, va="top")
-    fig.text(0.0, -0.075, "Escenario típico: de 8.000 simulaciones, la de total nacional más cercano a la mediana y más parecida "
-             "a la media de cada provincia.", fontsize=8.5, color=TINTA_3)
+    fig.text(0.0, -0.075, T("Escenario típico: de 8.000 simulaciones, la de total nacional más cercano a la mediana y más parecida "
+                            "a la media de cada provincia.",
+                            "Typical scenario: of 8,000 simulations, the one closest to the median national result and to the "
+                            "average of each province."), fontsize=8.5, color=TINTA_3)
     guardar(fig, "mapa_escanos.png")
 
 
 def mapa_ganador():
     prov = X["provincias"].set_index("provincia")
     geo = cargar_geo()
-    cortes = [(0.0, 0.6, 0.28, "menos del 60 %"), (0.6, 0.8, 0.5, "60–80 %"), (0.8, 0.95, 0.75, "80–95 %"), (0.95, 1.01, 1.0, "95 % o más")]
+    cortes = [(0.0, 0.6, 0.28, T("menos del 60 %", "under 60%")), (0.6, 0.8, 0.5, T("60–80 %", "60–80%")),
+              (0.8, 0.95, 0.75, T("80–95 %", "80–95%")), (0.95, 1.01, 1.0, T("95 % o más", "95% or more"))]
     fig, ax = plt.subplots(figsize=(11, 8.2))
     for nombre, r in prov.iterrows():
         cod = INE[r["prov_wiki"]]
@@ -442,7 +464,7 @@ def mapa_ganador():
         if cod in ("51", "52"):
             continue
         cx, cy = geo[cod][1]
-        ax.text(cx, cy, f"{nombre}\n{NOMBRE.get(r['ganador'], r['ganador'])} {r['P_ganador']:.0%}".replace("%", " %"),
+        ax.text(cx, cy, f"{nombre}\n{NOMBRE.get(r['ganador'], r['ganador'])} {pct(r['P_ganador'])}",
                 ha="center", va="center", fontsize=7.8, color=TINTA, zorder=4, linespacing=1.1)
     _marco_mapa(ax)
 
@@ -453,25 +475,28 @@ def mapa_ganador():
     for p in ganadores:
         n = int((prov.ganador == p).sum())
         lx.add_patch(plt.Rectangle((x, 0.62), 0.025, 0.3, color=COLORES[p]))
-        lx.text(x + 0.032, 0.77, f"{NOMBRE.get(p, p)}  ({n} {'provincia' if n == 1 else 'provincias'})", va="center",
+        lx.text(x + 0.032, 0.77, f"{NOMBRE.get(p, p)}  ({n} {T('provincia', 'province') if n == 1 else T('provincias', 'provinces')})", va="center",
                 fontsize=10.5, color=TINTA)
         x += 0.26
-    lx.text(0.0, 0.18, "El partido gana en el … de las simulaciones:", va="center", fontsize=10.5, color=TINTA_2)
+    lx.text(0.0, 0.18, T("El partido gana en el … de las simulaciones:", "Party wins in … of simulations:"), va="center", fontsize=10.5, color=TINTA_2)
     x = 0.38
     for _, _, t, etiqueta in cortes:
         lx.add_patch(plt.Rectangle((x, 0.04), 0.025, 0.3, color=_mezcla("#57606a", t)))
         lx.text(x + 0.032, 0.18, etiqueta, va="center", fontsize=10, color=TINTA)
         x += 0.15
-    titulo(fig, "¿Quién gana en cada provincia, y con qué seguridad?",
-           "Partido más votado en cada provincia. Color pálido: provincia en disputa, el ganador cambia de unas simulaciones a otras",
+    titulo(fig, T("¿Quién gana en cada provincia, y con qué seguridad?", "Who wins each province, and how sure is it?"),
+           T("Partido más votado en cada provincia. Color pálido: provincia en disputa, el ganador cambia de unas simulaciones a otras",
+             "Party with the most votes in each province. Pale = toss-up: the winner changes from one simulation to the next"),
            y=0.99)
     guardar(fig, "mapa_ganador.png")
 
 
 if __name__ == "__main__":
-    print("Generando figuras en", IMG)
-    hemiciclo(); probabilidades(); rangos(); sesgo_encuestadoras(); y_si_fallan(); prueba_2023(); tendencia_desde_notebook()
-    if "provincias" in X and GEOJSON.exists():
-        mapa_escanos(); mapa_ganador()
-    else:
-        print("  ! Falta la hoja «provincias» del Excel o data/provincias_espana.geojson: se omiten los mapas")
+    for LANG, OUT in [("es", IMG), ("en", IMG / "en")]:
+        OUT.mkdir(exist_ok=True)
+        print(f"Generando figuras ({LANG}) en", OUT)
+        hemiciclo(); probabilidades(); rangos(); sesgo_encuestadoras(); y_si_fallan(); prueba_2023(); tendencia_desde_notebook()
+        if "provincias" in X and GEOJSON.exists():
+            mapa_escanos(); mapa_ganador()
+        else:
+            print("  ! Falta la hoja «provincias» del Excel o data/provincias_espana.geojson: se omiten los mapas")

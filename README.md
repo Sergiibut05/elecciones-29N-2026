@@ -1,3 +1,5 @@
+<sub>🇪🇸 Español · 🇬🇧 [English](README.en.md)</sub>
+
 # 🗳️ Elecciones generales 29-N 2026: ¿qué dicen *de verdad* las encuestas?
 
 Un modelo estadístico que junta **todas las encuestas publicadas**, corrige el sesgo de cada empresa y **simula 20.000 veces la noche electoral** con el sistema electoral real (52 provincias, D'Hondt y umbral del 3 %).
@@ -154,7 +156,7 @@ La mejor forma de saber si un modelo es honesto es **ponerlo a prueba con el pas
 ```bash
 pip install -r requirements.txt
 jupyter notebook Elecciones_29N_modelo_bayesiano.ipynb   # genera resultados_29N.xlsx
-python scripts/figuras_readme.py                          # regenera las imágenes de img/
+python scripts/figuras_readme.py                          # regenera img/ (castellano) e img/en/ (inglés)
 ```
 
 Por defecto usa la **copia congelada** de los datos del 24-nov-2026 (`MODO_DATOS = "snapshot"`), así que dos ejecuciones dan exactamente el mismo resultado aunque Wikipedia cambie. Con `"online"` vuelve a descargarlo todo.
@@ -168,7 +170,8 @@ Por defecto usa la **copia congelada** de los datos del 24-nov-2026 (`MODO_DATOS
 | `simulaciones_escanos_base.csv.gz` | Las 20.000 simulaciones de escaños, por si quieres hacer tus propias cuentas |
 | `scripts/figuras_readme.py` | Genera las gráficas y mapas de este README a partir del Excel |
 | `data/provincias_espana.geojson` | Contornos de las 52 provincias, simplificados, para los mapas |
-| `img/` | Gráficas del README |
+| `img/`, `img/en/` | Gráficas del README (castellano e inglés) |
+| `README.en.md` | Este README en inglés |
 
 ---
 
