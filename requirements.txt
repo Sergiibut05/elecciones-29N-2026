@@ -1,0 +1,11 @@
+# Notebook (versiones con las que se ejecutó)
+pymc==5.28.5
+arviz==0.22.0
+nutpie==0.16.8   # muestreador NUTS rápido; opcional (sin él se usa el de PyMC). No necesita compilador C
+numpy
+pandas
+matplotlib
+openpyxl
+jinja2           # tablas con estilo (pandas Styler)
+
+# Solo para scripts/figuras_readme.py basta con: pandas, matplotlib, openpyxl
