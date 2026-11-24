@@ -2,6 +2,8 @@
 
 # 🗳️ Elecciones generales 29-N 2026: ¿qué dicen *de verdad* las encuestas?
 
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sergiibut05/elecciones-29N-2026/blob/main/Elecciones_29N_modelo_bayesiano.ipynb)
+
 Un modelo estadístico que junta **todas las encuestas publicadas**, corrige el sesgo de cada empresa y **simula 20.000 veces la noche electoral** con el sistema electoral real (52 provincias, D'Hondt y umbral del 3 %).
 
 > **En una frase:** el PP sería la fuerza más votada y PP + Vox sumarían mayoría absoluta en **unas 8 de cada 10 simulaciones**, pero si las encuestas fallan como en 2023 esa probabilidad baja a **menos de 3 de cada 10**.
@@ -149,7 +151,7 @@ La mejor forma de saber si un modelo es honesto es **ponerlo a prueba con el pas
 
 ## 🚀 Cómo ejecutarlo
 
-**Opción fácil:** abre `Elecciones_29N_modelo_bayesiano.ipynb` en [Google Colab](https://colab.research.google.com/) y pulsa *Entorno de ejecución → Ejecutar todas*. Instala lo que necesita solo. Tarda **unos 3–5 minutos** con el muestreador [nutpie](https://github.com/pymc-devs/nutpie), que se instala y usa automáticamente (30–35 minutos si se fuerza el estándar de PyMC).
+**Opción fácil:** pulsa [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sergiibut05/elecciones-29N-2026/blob/main/Elecciones_29N_modelo_bayesiano.ipynb) y luego *Entorno de ejecución → Ejecutar todas*. Instala lo que necesita solo. Tarda **unos 3–5 minutos** con el muestreador [nutpie](https://github.com/pymc-devs/nutpie), que se instala y usa automáticamente (30–35 minutos si se fuerza el estándar de PyMC).
 
 **En local:**
 

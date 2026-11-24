@@ -2,6 +2,8 @@
 
 # 🗳️ Spain's November 29, 2026 general election: what do the polls *really* say?
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sergiibut05/elecciones-29N-2026/blob/main/Elecciones_29N_modelo_bayesiano.ipynb)
+
 A statistical model that combines **every published poll**, corrects for each pollster's lean and **simulates election night 20,000 times** using Spain's real electoral system (52 provinces, D'Hondt, 3 % threshold).
 
 > **In one sentence:** PP would be the most-voted party, and PP + Vox reach a majority in **about 8 out of 10 simulations**. But if the polls miss the way they did in 2023, that chance falls to **under 3 in 10**.
@@ -169,7 +171,7 @@ The best way to know whether a model is honest is to **test it on the past**. Th
 
 ## 🚀 How to run it
 
-**Easy option:** open `Elecciones_29N_modelo_bayesiano.ipynb` in [Google Colab](https://colab.research.google.com/) and choose *Runtime → Run all*. It installs what it needs. It takes **about 3–5 minutes** with the [nutpie](https://github.com/pymc-devs/nutpie) sampler, which is installed and used automatically (30–35 minutes if you force PyMC's default sampler). The notebook itself is in Spanish.
+**Easy option:** click [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sergiibut05/elecciones-29N-2026/blob/main/Elecciones_29N_modelo_bayesiano.ipynb) and choose *Runtime → Run all*. It installs what it needs. It takes **about 3–5 minutes** with the [nutpie](https://github.com/pymc-devs/nutpie) sampler, which is installed and used automatically (30–35 minutes if you force PyMC's default sampler). The notebook itself is in Spanish.
 
 **Locally:**
 
